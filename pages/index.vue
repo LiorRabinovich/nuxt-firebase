@@ -14,40 +14,11 @@ export default {
   components: {
     PostList
   },
-  asyncData(context) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve({
-          loaddedPosts: [
-            {
-              id: "1",
-              title: "First Post",
-              previewText: "This id out first post",
-              thumbnail:
-                "https://images.pexels.com/photos/214574/pexels-photo-214574.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260",
-              content: "Content of the post"
-            },
-            {
-              id: "2",
-              title: "First Post",
-              previewText: "This id out first post",
-              thumbnail:
-                "https://images.pexels.com/photos/214574/pexels-photo-214574.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260",
-              content: "Content of the post"
-            }
-          ]
-        });
-      }, 1500);
-    })
-      .then(data => {
-        return data;
-      })
-      .catch(e => {
-        context.error(new Error());
-      });
-  },
-  created() {
-    this.$store.dispatch('setPosts', this.loaddedPosts)
+  computed: {
+    loaddedPosts() {
+      console.log(this.$store.state);
+      return this.$store.getters.loaddedPosts
+    }
   }
 };
 </script>
