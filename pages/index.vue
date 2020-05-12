@@ -3,7 +3,7 @@
     <section class="intro">
       <h1>Get the latest tech news!</h1>
     </section>
-    <PostList />
+    <PostList :posts="loaddedPosts" />
   </div>
 </template>
 
@@ -13,6 +13,28 @@ import PostList from "~/components/Posts/PostList.vue";
 export default {
   components: {
     PostList
+  },
+  data() {
+    return {
+      loaddedPosts: [
+        {
+          id: '1',
+          title: "First Post",
+          previewText: "This id out first post",
+          thumbnail:
+            "https://images.pexels.com/photos/214574/pexels-photo-214574.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260",
+          content: "Content of the post"
+        },
+        {
+          id: '2',
+          title: "First Post",
+          previewText: "This id out first post",
+          thumbnail:
+            "https://images.pexels.com/photos/214574/pexels-photo-214574.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260",
+          content: "Content of the post"
+        }
+      ]
+    };
   }
 };
 </script>
@@ -23,7 +45,7 @@ export default {
   position: relative;
   padding: 30px;
   box-sizing: border-box;
-  background-image: url('~assets/images/main-page-background.jpg');
+  background-image: url("~assets/images/main-page-background.jpg");
   background-position: center;
   background-size: cover;
 }
