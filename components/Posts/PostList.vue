@@ -2,12 +2,14 @@
   <section class="post-list">
     <PostPreview
       id="1"
+      :is-admin="isAdmin"
       thumbnail="https://africatechradio.com/wp-content/uploads/2020/04/Technology-industry-720x430-1.jpg"
       title="Hello 1"
       previewText="this my first post"
     />
     <PostPreview
       id="1"
+      :is-admin="isAdmin"
       thumbnail="https://africatechradio.com/wp-content/uploads/2020/04/Technology-industry-720x430-1.jpg"
       title="Hello 2"
       previewText="this my first post 2"
@@ -21,6 +23,12 @@ import PostPreview from "~/components/Posts/PostPreview.vue";
 export default {
   components: {
     PostPreview
+  },
+  props: {
+    isAdmin: {
+      type: Boolean,
+      default: false
+    }
   }
 };
 </script>
