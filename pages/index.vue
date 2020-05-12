@@ -3,29 +3,16 @@
     <section class="intro">
       <h1>Get the latest tech news!</h1>
     </section>
-    <section class="fetured-posts">
-      <PostPreview
-        id="1"
-        thumbnail="https://africatechradio.com/wp-content/uploads/2020/04/Technology-industry-720x430-1.jpg"
-        title="Hello 1"
-        previewText="this my first post"
-      />
-      <PostPreview
-        id="1"
-        thumbnail="https://africatechradio.com/wp-content/uploads/2020/04/Technology-industry-720x430-1.jpg"
-        title="Hello 2"
-        previewText="this my first post 2"
-      />
-    </section>
+    <PostList />
   </div>
 </template>
 
 <script>
-import PostPreview from "~/components/Posts/PostPreview.vue";
+import PostList from "~/components/Posts/PostList.vue";
 
 export default {
   components: {
-    PostPreview
+    PostList
   }
 };
 </script>
@@ -60,14 +47,5 @@ export default {
   .intro h1 {
     font-size: 2rem;
   }
-}
-
-.featured-posts {
-  display: flex;
-  padding: 20px;
-  box-sizing: border-box;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
 }
 </style>
