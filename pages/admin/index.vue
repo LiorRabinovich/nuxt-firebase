@@ -13,6 +13,7 @@
 <script>
 export default {
   layout: 'admin',
+  middleware: ['checkAuth', 'auth'],
   computed: {
     loaddedPosts() {
       return this.$store.getters.loaddedPosts;

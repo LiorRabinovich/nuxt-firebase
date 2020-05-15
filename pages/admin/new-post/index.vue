@@ -10,6 +10,7 @@
 import AdminPostForm from "@/components/Admin/AdminPostForm";
 export default {
   layout: "admin",
+  middleware: ['checkAuth', 'auth'],
   components: {
     AdminPostForm
   },

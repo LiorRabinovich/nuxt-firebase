@@ -13,6 +13,7 @@ export default {
     AdminPostForm
   },
   layout: "admin",
+  middleware: ['checkAuth', 'auth'],
   asyncData(context) {
     return context.app.$axios
       .$get(

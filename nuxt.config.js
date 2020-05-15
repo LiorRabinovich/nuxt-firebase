@@ -63,9 +63,10 @@ export default {
     }
   },
   env: {
-
+    BASE_URL: process.env.BASE_URL || 'https://nuxt-firebase-226d5.firebaseio.com',
+    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY || 'AIzaSyAQjUIrfxJh0sESizjpcJ4kZ1cGI31ZQko'
   },
-  transition: {
+  pageTransition: {
     name: 'fade',
     mode: 'out-in'
   }
