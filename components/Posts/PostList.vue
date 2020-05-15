@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import PostPreview from "~/components/Posts/PostPreview.vue";
+import PostPreview from "@/components/Posts/PostPreview.vue";
 
 export default {
   components: {

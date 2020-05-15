@@ -1,9 +1,9 @@
 <template>
-  <div class="single-post-page">
+  <div class="single-post-page" v-if="loaddedPost">
     <section class="post">
       <h1>{{loaddedPost.title}}</h1>
       <div class="post-details">
-        <div>Last updated on {{loaddedPost.updatedDate}}</div>
+        <div>Last updated on {{loaddedPost.updatedDate | date}}</div>
         <div>Written by {{loaddedPost.author}}</div>
       </div>
       <p class="post-content">{{loaddedPost.content}}</p>
@@ -20,23 +20,21 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
   asyncData(context) {
-    return axios.get(`https://nuxt-firebase-226d5.firebaseio.com/posts/${context.params.id}.json`)
-      .then(res => {
-        if (!res.data) {
-          context.error(new Error());
-          return;
-        }
-
+    return context.app.$axios
+      .$get(`/posts/${context.params.id}.json`)
+      .then(data => {
         return {
-          loaddedPost: res.data
+          loaddedPost: data
         };
       })
       .catch(e => {
         context.error(e);
       });
+  },
+  head: {
+    title: "Single blog"
   }
 };
 </script>

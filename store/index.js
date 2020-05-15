@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Vuex from 'vuex';
 
 const createStore = () => {
@@ -23,11 +22,11 @@ const createStore = () => {
         },
         actions: {
             nuxtServerInit(vuexContext, context) {
-                return axios.get('https://nuxt-firebase-226d5.firebaseio.com/posts.json')
-                    .then((res) => {
+                return context.app.$axios.$get('/posts.json')
+                    .then((data) => {
                         const postsArray = [];
-                        for (const key in res.data) {
-                            postsArray.push({ id: key, ...res.data[key] });
+                        for (const key in data) {
+                            postsArray.push({ id: key, ...data[key] });
                         }
                         vuexContext.commit('setPosts', postsArray)
                     })
@@ -41,9 +40,9 @@ const createStore = () => {
                     updatedDate: new Date()
                 };
 
-                return axios.post("https://nuxt-firebase-226d5.firebaseio.com/posts.json", createdPost)
-                    .then(response => {
-                        vuexContext.commit('addPost', { ...createdPost, id: response.data.name });
+                return this.$axios.$post("/posts.json", createdPost)
+                    .then(data => {
+                        vuexContext.commit('addPost', { ...createdPost, id: data.name });
                     })
                     .catch(error => {
                         console.log({ error });
@@ -55,12 +54,12 @@ const createStore = () => {
                     updatedDate: new Date()
                 }
 
-                return axios.put(`https://nuxt-firebase-226d5.firebaseio.com/posts/${editedPost.id}.json`, editedPost)
-                .then(response => {
-                  vuexContext.commit('editPost', editedPost);
-                }).catch(error => {
-                  console.log({ error });
-                });
+                return this.$axios.$put(`/posts/${editedPost.id}.json`, editedPost)
+                    .then(response => {
+                        vuexContext.commit('editPost', editedPost);
+                    }).catch(error => {
+                        console.log({ error });
+                    });
             },
             setPosts(vuexContext, posts) {
                 vuexContext.commit('setPosts', posts);
