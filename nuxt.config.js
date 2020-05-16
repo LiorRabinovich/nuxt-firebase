@@ -49,10 +49,37 @@ export default {
   */
   modules: [
     '@nuxtjs/axios',
+    '@nuxtjs/firebase'
   ],
   axios: {
     baseURL: process.env.BASE_URL || 'https://nuxt-firebase-226d5.firebaseio.com',
     credentials: false
+  },
+  firebase: {
+    config: {
+      apiKey: "AIzaSyAQjUIrfxJh0sESizjpcJ4kZ1cGI31ZQko",
+      authDomain: "nuxt-firebase-226d5.firebaseapp.com",
+      databaseURL: "https://nuxt-firebase-226d5.firebaseio.com",
+      projectId: "nuxt-firebase-226d5",
+      storageBucket: "nuxt-firebase-226d5.appspot.com",
+      messagingSenderId: "723156868689",
+      appId: "1:723156868689:web:8ca3db111cb369e5bf6270",
+      measurementId: "G-V13P5DWGFL"
+    },
+    services: {
+      auth: {
+        initialize: {
+          ssr: true
+        },
+        ssr: {
+          serverLogin: true
+        }
+      },
+      firestore: true
+    }
+  },
+  pwa: {
+
   },
   /*
   ** Build configuration

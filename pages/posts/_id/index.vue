@@ -22,18 +22,21 @@
 <script>
 export default {
   asyncData(context) {
-    if (context.payload) {
-      return {
-        loaddedPost: context.payload.postData
-      };
-    }
-
-    return context.app.$axios
-      .$get(`/posts/${context.params.id}.json`)
-      .then(data => {
-        return {
-          loaddedPost: data
-        };
+    return context.app.$fireStore
+      .collection("posts")
+      .doc(context.params.id)
+      .get()
+      .then(doc => {
+        if (!doc.exists) {
+          context.error(doc);
+          return {
+            loaddedPost: {}
+          };
+        } else {
+          return {
+            loaddedPost: doc.data()
+          };
+        }
       })
       .catch(e => {
         context.error(e);

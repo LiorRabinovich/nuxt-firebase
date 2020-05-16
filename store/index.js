@@ -29,17 +29,17 @@ const createStore = () => {
             }
         },
         actions: {
-            nuxtServerInit(vuexContext, context) {
-                return context.app.$axios.$get('/posts.json')
-                    .then((data) => {
+            async nuxtServerInit(vuexContext, context) {
+                return context.app.$fireStore.collection('posts').get()
+                    .then(snapshot => {
                         const postsArray = [];
-                        for (const key in data) {
-                            postsArray.push({ id: key, ...data[key] });
-                        }
+                        snapshot.forEach(doc => {
+                            postsArray.push({ id: doc.id, ...doc.data() });
+                        });
                         vuexContext.commit('setPosts', postsArray)
                     })
-                    .catch((error) => {
-                        console.log({ error });
+                    .catch(err => {
+                        console.log('Error getting documents', err);
                     });
             },
             addPost(vuexContext, postData) {
@@ -48,13 +48,9 @@ const createStore = () => {
                     updatedDate: new Date()
                 };
 
-                return this.$axios.$post(`/posts.json?auth=${vuexContext.state.token}`, createdPost)
-                    .then(data => {
-                        vuexContext.commit('addPost', { ...createdPost, id: data.name });
-                    })
-                    .catch(error => {
-                        console.log({ error });
-                    });
+                return this.$fireStore.collection('posts').add(createdPost).then(data => {
+                    vuexContext.commit('addPost', { ...createdPost, id: data.name });
+                })
             },
             editPost(vuexContext, postData) {
                 const editedPost = {
@@ -62,85 +58,28 @@ const createStore = () => {
                     updatedDate: new Date()
                 }
 
-                return this.$axios.$put(`/posts/${editedPost.id}.json?auth=${vuexContext.state.token}`, editedPost)
-                    .then(response => {
-                        vuexContext.commit('editPost', editedPost);
-                    }).catch(error => {
-                        console.log({ error });
-                    });
+                return this.$fireStore.collection('posts').doc(editedPost.id).set(editedPost).then(data => {
+                    vuexContext.commit('editPost', editedPost);
+                })
             },
             setPosts(vuexContext, posts) {
                 vuexContext.commit('setPosts', posts);
             },
             authUser(vuexContext, authData) {
-                let authUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`;
-                if (!authData.isLogin) {
-                    authUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.FIREBASE_API_KEY}`;
+                if (authData.isLogin) {
+                    return this.$fireAuth.signInWithEmailAndPassword(
+                        authData.email,
+                        authData.password
+                    );
                 }
 
-                return this.$axios
-                    .$post(authUrl, {
-                        email: authData.email,
-                        password: authData.password,
-                        returnSecureToken: true
-                    })
-                    .then(result => {
-                        vuexContext.commit('setToken', result.idToken);
-                        localStorage.setItem('token', result.idToken);
-                        localStorage.setItem('tokenExpiration', new Date().getTime() + Number.parseInt(result.expiresIn) * 1000);
-                        Cookie.set('jwt', result.idToken);
-                        Cookie.set('expirationDate', new Date().getTime() + Number.parseInt(result.expiresIn) * 1000);
-                        console.log('bla');
-                        return this.$axios.$post('http://localhost:3000/api/track-data', {
-                            data: 'Auth'
-                        })
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-            },
-            initAuth(vuexContext, req) {
-                let token;
-                let expirationDate;
-                if (req) {
-                    if (!req.headers.cookie) {
-                        return;
-                    }
-
-                    const jwtCookie = req.headers.cookie
-                        .split(';')
-                        .find(c => c.trim().startsWith('jwt='));
-
-                    if (!jwtCookie) {
-                        return;
-                    }
-
-                    token = jwtCookie.split('=')[1];
-                    expirationDate = req.headers.cookie
-                        .split(';')
-                        .find(c => c.trim().startsWith('expirationDate='))
-                        .split('=')[1];
-                } else if (process.client) {
-                    token = localStorage.getItem('token')
-                    expirationDate = localStorage.getItem('tokenExpiration')
-                }
-
-                if (new Date().getTime() > +expirationDate || !token) {
-                    vuexContext.dispatch('logout');
-                    return;
-                }
-
-                vuexContext.commit('setToken', token);
+                return this.$fireAuth.createUserWithEmailAndPassword(
+                    authData.email,
+                    authData.password
+                )
             },
             logout(vuexContext) {
-                vuexContext.commit('clearToken');
-                Cookie.remove('jwt');
-                Cookie.remove('expirationDate');
-
-                if (process.client) {
-                    localStorage.removeItem('token')
-                    localStorage.removeItem('tokenExpiration')
-                }
+                return this.$fireAuth.signOut();
             }
         },
         getters: {

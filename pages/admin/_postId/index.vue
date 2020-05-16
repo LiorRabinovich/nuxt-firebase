@@ -13,16 +13,23 @@ export default {
     AdminPostForm
   },
   layout: "admin",
-  middleware: ['checkAuth', 'auth'],
+  // middleware: ['checkAuth', 'auth'],
   asyncData(context) {
-    return context.app.$axios
-      .$get(
-        `/posts/${context.params.postId}.json`
-      )
-      .then(data => {
-        return {
-          loaddedPost: { ...data, id: context.params.postId }
-        };
+    return context.app.$fireStore
+      .collection("posts")
+      .doc(context.params.postId)
+      .get()
+      .then(doc => {
+        if (!doc.exists) {
+          context.error(doc);
+          return {
+            loaddedPost: {}
+          };
+        } else {
+          return {
+            loaddedPost: { ...doc.data(), id: context.params.postId }
+          };
+        }
       })
       .catch(e => {
         context.error(e);
@@ -30,9 +37,15 @@ export default {
   },
   methods: {
     onSubmit(postData) {
-      this.$store.dispatch("editPost", postData).then(() => {
-        this.$router.push("/admin");
-      });
+      this.$store
+        .dispatch("editPost", postData)
+        .then(() => {
+          this.$router.push("/admin");
+        })
+        .catch(error => {
+          console.log({ error });
+          alert("d12fs5ad3");
+        });
     }
   }
 };
